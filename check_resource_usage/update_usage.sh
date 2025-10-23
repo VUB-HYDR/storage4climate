@@ -20,7 +20,7 @@ for project_name in "${project_names[@]}"; do
     cp "$file" "$input_file"
 
     # Remove all lines before the line containing "Project Usages" but keep the line itself
-    sed -i '1,/Project Usages/{/Project Usages/!d}' "$input_file"
+    #sed -i '1,/Project Usages/{/Project Usages/!d}' "$input_file"
 
     echo "Copied project: $project_name"
 
