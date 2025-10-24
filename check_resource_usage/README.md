@@ -10,6 +10,10 @@ Original github repo [VSC_ugent](https://github.com/kobebryant432/VSC_ugent).
 
 ![](VSC_monitoring/output/monitoring.png)
 
+## File number monitoring
+
+![](https://github.com/kobebryant432/storage4climate/blob/file_no/file_number_monitoring/plots/file_usage_plot.png)
+
 # How to update
 
 If not done already, clone this repository
