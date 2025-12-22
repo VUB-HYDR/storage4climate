@@ -17,8 +17,15 @@ import os
 
 
 year = '2025'
-current_quarter = 'Q1'
 
+date = pd.Timestamp.today().normalize()
+
+for quarter, dates in d_quarters.items():
+    if quarter == "total":
+        continue
+    if date in dates:
+        current_quarter = quarter
+        
 d_quarters = {'Q1': pd.date_range(start=pd.to_datetime("2025-02-08"),end=pd.to_datetime("2025-05-08")), 
               'Q2': pd.date_range(start=pd.to_datetime("2025-05-08"),end=pd.to_datetime("2025-08-08")), 
               'Q3': pd.date_range(start=pd.to_datetime("2025-08-08"),end=pd.to_datetime("2025-11-08")), 
@@ -89,8 +96,10 @@ for i, group in enumerate(d_projects.keys()):
     # read the input files
     path = rf'{path_monitoring}input'
     all_files = glob.glob(f'{path}/*{project}.csv')
+    all_files.sort()
 
-    df = pd.read_csv(all_files[0], header=1)
+
+    df = pd.read_csv(all_files[-1], header=1)
 
     #########################
     #     Pre-processing    #
