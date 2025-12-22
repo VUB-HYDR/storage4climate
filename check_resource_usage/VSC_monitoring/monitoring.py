@@ -18,6 +18,14 @@ import os
 
 year = '2025'
 
+
+
+d_quarters = {'Q1': pd.date_range(start=pd.to_datetime("2025-02-08"),end=pd.to_datetime("2025-05-08")), 
+              'Q2': pd.date_range(start=pd.to_datetime("2025-05-08"),end=pd.to_datetime("2025-08-08")), 
+              'Q3': pd.date_range(start=pd.to_datetime("2025-08-08"),end=pd.to_datetime("2025-11-08")), 
+              'Q4': pd.date_range(start=pd.to_datetime("2025-11-08"),end=pd.to_datetime("2026-02-08")), 
+              'total': pd.date_range(start=pd.to_datetime("2025-02-08"),end=pd.to_datetime("2026-02-08")) }
+
 date = pd.Timestamp.today().normalize()
 
 for quarter, dates in d_quarters.items():
@@ -25,12 +33,6 @@ for quarter, dates in d_quarters.items():
         continue
     if date in dates:
         current_quarter = quarter
-        
-d_quarters = {'Q1': pd.date_range(start=pd.to_datetime("2025-02-08"),end=pd.to_datetime("2025-05-08")), 
-              'Q2': pd.date_range(start=pd.to_datetime("2025-05-08"),end=pd.to_datetime("2025-08-08")), 
-              'Q3': pd.date_range(start=pd.to_datetime("2025-08-08"),end=pd.to_datetime("2025-11-08")), 
-              'Q4': pd.date_range(start=pd.to_datetime("2025-11-08"),end=pd.to_datetime("2026-02-08")), 
-              'total': pd.date_range(start=pd.to_datetime("2025-02-08"),end=pd.to_datetime("2026-02-08")) }
 
 time_range_previous_cycle = pd.date_range(start=pd.to_datetime("2024-02-08"),end=pd.to_datetime("2025-02-08"))
 
