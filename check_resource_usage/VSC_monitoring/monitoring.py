@@ -83,7 +83,7 @@ df_requested_year = pd.read_csv(f"{path_monitoring}requested_resources_{year}.cs
 df_transferred_year = pd.read_csv(f"{path_monitoring}transferred_resources_{year}.csv", delimiter=";",index_col=0)
 
 
-df_requested = df_left_from_2024 + df_requested_year + df_transferred_year
+df_requested =  df_requested_year #+ df_transferred_year + df_left_from_2024
 
 
 # select one project group
@@ -151,7 +151,7 @@ for i, group in enumerate(d_projects.keys()):
     # Plot remaining_credits and quarter_credits
 
     ax.bar(quarter_credits.index, quarter_credits.values*1e-6, label='Total available credits', color='white',  edgecolor='gray', linewidth=2, width=0.4, align='center')
-    ax.bar(df_left_from_2024.loc[group].index, df_left_from_2024.loc[group].values*1e-6, label='Of which leftover credits', color='white',edgecolor='gray', linewidth=2,linestyle='dashed', alpha=0.7, width=0.4, align='center')
+    #ax.bar(df_left_from_2024.loc[group].index, df_left_from_2024.loc[group].values*1e-6, label='Of which leftover credits', color='white',edgecolor='gray', linewidth=2,linestyle='dashed', alpha=0.7, width=0.4, align='center')
 
     ax.bar(used_credits.index, used_credits.values*1e-6, label='Used credits', color=colors[i],edgecolor=colors[i], linewidth=2, alpha=0.3, width=0.4, align='center')
 
