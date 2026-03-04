@@ -16,25 +16,33 @@ import os
 #########################
 
 
-year = '2025'
+year = '2026'
 
 
 
-d_quarters = {'Q1': pd.date_range(start=pd.to_datetime("2025-02-08"),end=pd.to_datetime("2025-05-08")), 
-              'Q2': pd.date_range(start=pd.to_datetime("2025-05-08"),end=pd.to_datetime("2025-08-08")), 
-              'Q3': pd.date_range(start=pd.to_datetime("2025-08-08"),end=pd.to_datetime("2025-11-08")), 
-              'Q4': pd.date_range(start=pd.to_datetime("2025-11-08"),end=pd.to_datetime("2026-02-08")), 
-              'total': pd.date_range(start=pd.to_datetime("2025-02-08"),end=pd.to_datetime("2026-02-08")) }
+d_quarters = {
+    'Q1': pd.date_range(start=pd.to_datetime("2026-02-27"),
+                        end=pd.to_datetime("2026-05-26")),
+    'Q2': pd.date_range(start=pd.to_datetime("2026-05-27"),
+                        end=pd.to_datetime("2026-08-26")),
+    'Q3': pd.date_range(start=pd.to_datetime("2026-08-27"),
+                        end=pd.to_datetime("2026-11-26")),
+    'Q4': pd.date_range(start=pd.to_datetime("2026-11-27"),
+                        end=pd.to_datetime("2027-02-28")),
+    'total': pd.date_range(start=pd.to_datetime("2026-02-27"),
+                           end=pd.to_datetime("2027-02-28"))}
 
 date = pd.Timestamp.today().normalize()
 
-for quarter, dates in d_quarters.items():
-    if quarter == "total":
-        continue
-    if date in dates:
-        current_quarter = quarter
+current_quarter = None
 
-time_range_previous_cycle = pd.date_range(start=pd.to_datetime("2024-02-08"),end=pd.to_datetime("2025-02-08"))
+for q in ["Q1", "Q2", "Q3", "Q4"]:
+    start = d_quarters[q][0]
+    end = d_quarters[q][-1]
+    
+    if start <= date <= end:
+        current_quarter = q
+        break
 
 d_projects = {'BCLIMATE'  :  '2022_201', 
               'RCS'       :  '2022_202', 
@@ -59,31 +67,11 @@ date = pd.to_datetime('today').strftime('%Y%m%d')
 
 #Get the git directory
 path_monitoring = f"./check_resource_usage/VSC_monitoring/"
-# load requested resources in S4C proposal
 
-df_requested_2024 = pd.read_csv(f"{path_monitoring}requested_resources_2024.csv", delimiter=";",index_col=0)
-df_transferred_2024 = pd.read_csv(f"{path_monitoring}transferred_resources_2024.csv", delimiter=";",index_col=0)
-
-df_used_2024 = pd.read_csv(f"{path_monitoring}used_resources_2024.csv", delimiter=";",index_col=0)
-
-# the final amount of credits available is the sum of the requested credits in the proposal and the transferred credits from the previous year, minus the use of the previous year. 
-
-ds_left_from_2024 = df_requested_2024['total']+ df_transferred_2024['total']  - df_used_2024['total']
-
-# redistribute what is left of 2024 evenly over quarters
-df_left_from_2024 = ds_left_from_2024.to_frame(name='total')
-
-for quarter in ['Q1', 'Q2', 'Q3', 'Q4']:
-    df_left_from_2024[quarter] = df_left_from_2024['total'].div(4)
-
-df_left_from_2024.reindex(columns=['Q1', 'Q2', 'Q3', 'Q4','total'])
-
-# load requested resources in S4C proposal in 2025
+# load requested resources in S4C proposal 
 df_requested_year = pd.read_csv(f"{path_monitoring}requested_resources_{year}.csv", delimiter=";",index_col=0)
-df_transferred_year = pd.read_csv(f"{path_monitoring}transferred_resources_{year}.csv", delimiter=";",index_col=0)
 
-
-df_requested =  df_requested_year #+ df_transferred_year + df_left_from_2024
+df_requested =  df_requested_year 
 
 
 # select one project group
@@ -122,9 +110,6 @@ for i, group in enumerate(d_projects.keys()):
 
     #Make a dictionary with the remaining credits per quarter by subtracting the total used from the total credits per quarter until there are no credits left
     used_credits = quarter_credits.copy().loc[['Q1','Q2','Q3','Q4']]
-
-    
-    used_credits_previouscycle = (df_credits[df_credits['Date'].isin(time_range_previous_cycle)]['Total_used']).sum()
 
 
     for key in d_quarters.keys():
@@ -167,10 +152,8 @@ for i, group in enumerate(d_projects.keys()):
     # Add the total number of quarter and used credits in a box
     total_requested_credits = df_requested_year.loc[group]['total']
     total_used_credits = used_credits['total']
-    total_transferred_credits = df_transferred_year.loc[group]['total']
-    total_left_credits = df_left_from_2024.loc[group]['total']
 
-    text_str = f'Requested in {year}: {total_requested_credits * 1e-6:.1f}M\nLeft from 2024: {total_left_credits * 1e-6:.1f}M\nUsed: {total_used_credits * 1e-6:.1f}M\nTransferred: {total_transferred_credits * 1e-6:.1f}M'
+    text_str = f'Requested in {year}: {total_requested_credits * 1e-6:.1f}M\nUsed: {total_used_credits * 1e-6:.1f}M'
 
     # Add text with a box around it
     ax.text(0.8, 0.96, text_str, transform=ax.transAxes, ha='right', va='top', fontsize=12,
@@ -208,10 +191,9 @@ total_quarter_credits = (df_requested_year.drop(columns=['total']).transpose()).
 total_requested_left_credits = (df_requested_credits.loc[['Q1','Q2','Q3','Q4']]).sum(axis=1).sum()
 
 total_used_credits = (df_used_credits.loc[['Q1','Q2','Q3','Q4']]).sum().sum()
-total_left_from_2024 = (df_left_from_2024.drop(columns=['total']).transpose()).sum().sum()
 
 
-text_str = f'Requested in {year}: {total_quarter_credits * 1e-6:.0f}M\n Left from 2024: {total_left_from_2024 * 1e-6:.0f}M\n Total available: {total_requested_left_credits * 1e-6:.0f}M\n Used: {total_used_credits * 1e-6:.0f}M'
+text_str = f'Requested in {year}: {total_quarter_credits * 1e-6:.0f}M\n Total available: {total_requested_left_credits * 1e-6:.0f}M\n Used: {total_used_credits * 1e-6:.0f}M'
 
 # Add text with a box around it
 ax.text(0.8, 0.96, text_str, transform=ax.transAxes, ha='right', va='top', fontsize=12,
