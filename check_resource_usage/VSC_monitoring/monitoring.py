@@ -58,7 +58,7 @@ sns.set_theme(style='whitegrid')
 fig, axes = plt.subplots(3,2,figsize=(16, 15))
 axes= axes.flatten()
 colors = ['tab:blue', 'tab:orange', 'tab:green','tab:red','tab:purple']
-date = pd.to_datetime('today').strftime('%Y%m%d')
+date = date.strftime('%Y%m%d')
 
 
 #########################
