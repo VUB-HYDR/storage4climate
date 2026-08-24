@@ -52,6 +52,8 @@ d_projects = {'BCLIMATE'  :  '2022_201',
 
 
 
+
+
 # Create bar plots
 #Set the style of the plots 
 sns.set_theme(style='whitegrid')
