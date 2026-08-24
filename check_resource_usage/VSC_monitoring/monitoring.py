@@ -219,7 +219,8 @@ df_used_credits.to_csv(f'{path_monitoring}/output/used_resources.csv')
 
 #Move the csv file to the output archive folder
 
-shutil.move(all_files[0], f'{path_monitoring}/archive/')
+shutil.copy2(all_files[0], f'{path_monitoring}/archive/')
+os.remove(all_files[0])
 shutil.copy(f'{path_monitoring}/output/monitoring.png', f'{path_monitoring}/archive/{current_quarter}_{date}_monitoring.png')
 shutil.copy(f'{path_monitoring}/output/used_resources.csv', f'{path_monitoring}/archive/{current_quarter}_{date}_used_resources.csv')
 
